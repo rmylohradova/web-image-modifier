@@ -1,0 +1,35 @@
+<form action= "/upload" method="post" enctype="multipart/form-data">
+    Select a .png, .jpg, .jpeg file: <input type="file" name="upload"/>
+    <div>
+        <p>Change picture size:</p>
+        <label for="height">height</label>
+        <input type="number" name="height" id="height" min="1" max="1080" />
+    </div>
+    <div>
+        <label for="width">width</label>
+        <input type="number" name="width" id="width" min="1" max="1080" />
+    </div>
+    <div>
+        <p>Rotate # degrees counter-clockwise:</p>
+        <label>rotate</label>
+        <input type="number" name="rotate" id="rotate" min="1" max="360">
+    </div>
+    <div>
+     <p>Flip the image left-right:</p>
+        <input type="checkbox" name="left-right"/>
+    </div>
+    <div>
+     <p>Flip the image top-bottom:</p>
+        <input type="checkbox" name="top-bottom"/>
+    </div>
+    <div>
+        <p>Choose colored picture or black&white</p>
+        <input type="radio" id="rgb" name="band" value="RGB">
+        <label for="RGB">colored</label><br>
+        <input type="radio" id="l" name="band" value="L">
+        <label for="l">black/white</label><br>
+    </div>
+    <div>
+        <input type="submit" value="Apply" />
+    </div>
+</form>

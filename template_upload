@@ -1,0 +1,7 @@
+<head>
+    <title>Uploaded image</title>
+</head>
+<p>Image before changes</p>
+<img src="/static/{{ picture_before }}"/>
+<p>Image after changes</p>
+<img src="/static/{{ picture_after }}"/>
