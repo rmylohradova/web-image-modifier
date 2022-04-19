@@ -42,23 +42,27 @@ class CleanedData(BaseModel):
 
     @validator('height', 'width')
     def check_size(cls, value):
-        if value < 1 or value > 1080:
-            raise ValueError('must be within 1-1080 range')
+        if value is not None:
+            if value < 1 or value > 1080:
+                raise ValueError('must be within 1-1080 range')
         return value
 
     @validator('rotate')
     def check_degrees(cls, value):
-        if value < 1 or value > 360:
-            raise ValueError('must be from 1 to 360 degrees')
+        if value is not None:
+            if value < 1 or value > 360:
+                raise ValueError('must be from 1 to 360 degrees')
         return value
 
     @validator('brightness', 'color', 'sharpness', 'contrast')
     def check_range(cls, value):
-        if value < 1 or value > 1000:
-            raise ValueError('must be from 1 to 1000')
+        if value is not None:
+            if value < 1 or value > 1000:
+                raise ValueError('must be from 1 to 1000')
         return value
 
-print(CleanedData.schema())
+
+
 def convert(percent):
     final = (percent/100)+1
     return final
