@@ -147,11 +147,6 @@ def do_upload():
         contrasted.save(mod_path)
         return template("template_upload", picture_before=upload.filename, picture_after=new_name)
 
-# @route('history/<filename>')
-# def show_history(filename):
-#     for file in folder
-#     return template("template_upload", picture_before=name, picture_after=new_name)
-
 
 
 @route('/static/<filename>')
