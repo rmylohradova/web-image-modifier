@@ -1,16 +1,34 @@
 import os
-from PIL import Image, ImageFilter, ImageEnhance
+from PIL import Image, ImageFilter, ImageEnhance, ImageDraw, ImageFont
 from bottle import route, run, request, \
     template, static_file
 from pydantic import BaseModel, validator, Field
 from typing import Optional
 from enum import Enum
+import textwrap
+from string import ascii_letters
 
 
 class Band(str, Enum):
     rgb = 'rgb'
     l = 'l'
 
+
+class MergedBand(str, Enum):
+    pink = 'pink'
+    blue = 'blue'
+    green = 'green'
+
+class TextPlacement(str, Enum):
+    center: 'center'
+    top_center: 'top_center'
+    bottom_center: 'bottom_center'
+    top_left: 'top_left'
+    center_left: 'center_left'
+    bottom_left: 'bottom_left'
+    top_right: 'top_right'
+    center_right: 'center_right'
+    bottom_right: 'bottom_right'
 
 class CleanedData(BaseModel):
     height: Optional[int]
@@ -33,6 +51,12 @@ class CleanedData(BaseModel):
     color: Optional[int]
     sharpness: Optional[int]
     contrast: Optional[int]
+    merged_bands: MergedBand = Field(None)
+    on_text: Optional[str]
+    text_color: Optional[str]
+    text_placement: str
+    text_size: Optional[int]
+    font: str
 
     @validator('*', pre=True)
     def blank_string(cls, value):
@@ -54,7 +78,7 @@ class CleanedData(BaseModel):
                 raise ValueError('must be from 1 to 360 degrees')
         return value
 
-    @validator('brightness', 'color', 'sharpness', 'contrast')
+    @validator('brightness', 'color', 'sharpness', 'contrast', 'text_size')
     def check_range(cls, value):
         if value:
             if value < 1 or value > 1000:
@@ -66,6 +90,28 @@ def convert(percent):
     final = (percent/100)+1
     return final
 
+def text_center(txt, color, img, txt_size, font):
+    if font == "arial":
+        font_file = 'arial.ttf'
+    elif font == "cursive":
+        font_file = 'cursive.ttf'
+    elif font == 'bold':
+        font_file = 'COOPBL.ttf'
+    elif font == 'hello_kitty':
+        font_file = 'hellokitty.ttf'
+    dctx = ImageDraw.Draw(img)
+    fnt = ImageFont.truetype(font_file, txt_size)
+    avg_char_width = sum(fnt.getsize(char)[0] for char in ascii_letters) / len(ascii_letters)
+    max_char_count = int(img.width/ avg_char_width)
+    text = textwrap.fill(text=txt, width=max_char_count)
+    dctx.text(
+        (img.width / 2, img.height/2),
+        text,
+        font=fnt,
+        fill=color,
+        anchor='mm',
+        align='center'
+    )
 
 @route("/")
 def main():
@@ -142,20 +188,42 @@ def do_upload():
             contrasted = img_contrast.enhance(contrast_value)
         elif data.contrast is None:
             contrasted = sharpened
-        new_name = "modified" + name + ext
-        mod_path = os.path.join("./files", new_name)
+        r, g, b = contrasted.split()
+        if data.merged_bands == 'pink':
+            contrasted = Image.merge("RGB", (r, b, g))
+        if data.merged_bands == 'blue':
+            contrasted = Image.merge("RGB", (b, g, r))
+        if data.merged_bands == 'green':
+            contrasted = Image.merge("RGB", (g, r, b))
+        size = contrasted.size
+        print(data.text_placement)
+        if data.on_text:
+            txt = data.on_text
+            text_center(txt, data.text_color, contrasted, data.text_size, data.font)
+        new_name = upload.filename
+        mod_path = os.path.join("./modified", new_name)
         contrasted.save(mod_path)
-        return template("template_upload", picture_before=upload.filename, picture_after=new_name)
+        return template("template_upload", picture_before=upload.filename, picture_after=new_name, size=size)
 
+@route('/history/<filename>')
+def show_images(filename):
+    name, ext = os.path.splitext(filename)
+    return template('single_history', picture_before=filename, picture_after=filename, picture_name=name)
 
+@route('/history')
+def show_all():
+    original = []
+    for filename in os.listdir('files/'):
+            original.append(filename)
+    return template('history', original=original)
 
 @route('/static/<filename>')
 def server_static(filename):
     return static_file(filename, root="./files")
 
-@route('/static/<filename>')
+@route('/static/modified/<filename>')
 def server_static(filename):
-    return static_file(filename, root="./files")
+    return static_file(filename, root="./modified")
 
 
 

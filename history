@@ -1,0 +1,11 @@
+<head>
+    <title>Saved changes for all images</title>
+</head>
+<a href="/">home</a>
+<p>Files changed: </p>
+% for filename in original:
+    <p>
+    <a href="/history/{{filename}}">{{filename}}</a>
+    </p>
+% end
+
