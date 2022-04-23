@@ -3,7 +3,7 @@
     <div>
         <p>Change picture size:</p>
         <label for="height">height</label>
-        <input type="number" name="height" id="height" min="1" max="1080" />
+        <input type="number" name="height" id="height" min="1" max="1080"/>
     </div>
     <div>
         <label for="width">width</label>
@@ -12,22 +12,64 @@
     <div>
         <p>Rotate # degrees counter-clockwise:</p>
         <label>rotate</label>
-        <input type="number" name="rotate" id="rotate" min="1" max="360">
+        <input type="number" name="rotate" id="rotate" min="0" max="360"/>
     </div>
     <div>
      <p>Flip the image left-right:</p>
-        <input type="checkbox" name="left-right"/>
+        <input type="checkbox" name="left_right"/>
     </div>
     <div>
      <p>Flip the image top-bottom:</p>
-        <input type="checkbox" name="top-bottom"/>
+        <input type="checkbox" name="top_bottom"/>
     </div>
     <div>
         <p>Choose colored picture or black&white</p>
-        <input type="radio" id="rgb" name="band" value="RGB">
-        <label for="RGB">colored</label><br>
-        <input type="radio" id="l" name="band" value="L">
+        <input type="radio" id="rgb" name="band" value="rgb">
+        <label for="rgb">colored</label><br>
+        <input type="radio" id="l" name="band" value="l">
         <label for="l">black/white</label><br>
+    </div>
+    <div><p>Filter your image:</p>
+        <label>blur</label>
+        <input type="checkbox" name="blur"/>
+        <label>minfilter</label>
+        <input type="checkbox" name="minfilter"/>
+        <label>maxfilter</label>
+        <input type="checkbox" name="maxfilter"/>
+        <label>sharpen</label>
+        <input type="checkbox" name="sharpen"/>
+        <label>contour</label>
+        <input type="checkbox" name="contour"/>
+        <label>smooth</label>
+        <input type="checkbox" name="smooth"/>
+        <label>detail</label>
+        <input type="checkbox" name="detail"/>
+        <label>emboss</label>
+        <input type="checkbox" name="emboss"/>
+        <label>edge enhance</label>
+        <input type="checkbox" name="edge_enhance"/>
+        <label>find edges</label>
+        <input type="checkbox" name="find_edges"/>
+    </div>
+    <div>
+        <p>Enhance brightness by # % (from 1 to 1000%):</p>
+        <label>brightness</label>
+        <input type="number" name="brightness" id="brightness" min="1" max="1000">
+    </div>
+    <div>
+        <p>Enhance color by # % (from 1 to 1000%):</p>
+        <label>color</label>
+        <input type="number" name="color" id="color" min="1" max="1000">
+    </div>
+    <div>
+        <p>Enhance sharpness by # % (from 1 to 1000%):</p>
+        <label>sharpness</label>
+        <input type="number" name="sharpness" id="sharpness" min="1" max="1000">
+    </div>
+    <div>
+        <p>Enhance contrast by # % (from 1 to 1000%):</p>
+        <label>contrast</label>
+        <input type="number" name="contrast" id="contrast" min="1" max="1000">
     </div>
     <div>
         <input type="submit" value="Apply" />
