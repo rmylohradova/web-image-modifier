@@ -20,15 +20,18 @@ class MergedBand(str, Enum):
     green = 'green'
 
 class TextPlacement(str, Enum):
-    center: 'center'
-    top_center: 'top_center'
-    bottom_center: 'bottom_center'
-    top_left: 'top_left'
-    center_left: 'center_left'
-    bottom_left: 'bottom_left'
-    top_right: 'top_right'
-    center_right: 'center_right'
-    bottom_right: 'bottom_right'
+    center = 'center'
+    top_center = 'top_center'
+    bottom_center = 'bottom_center'
+    center_left = 'center_left'
+    center_right = 'center_right'
+
+class TextFont(str, Enum):
+    arial = 'arial'
+    bold = 'bold'
+    cursive = 'cursive'
+    hello_kitty = 'hello_kitty'
+
 
 class CleanedData(BaseModel):
     height: Optional[int]
@@ -54,9 +57,9 @@ class CleanedData(BaseModel):
     merged_bands: MergedBand = Field(None)
     on_text: Optional[str]
     text_color: Optional[str]
-    text_placement: str
+    text_placement: TextPlacement = Field('center')
     text_size: Optional[int]
-    font: str
+    font: TextFont = Field('arial')
 
     @validator('*', pre=True)
     def blank_string(cls, value):
@@ -90,7 +93,8 @@ def convert(percent):
     final = (percent/100)+1
     return final
 
-def text_center(txt, color, img, txt_size, font):
+
+def multi_text_center(txt, txt_color, img, txt_size, font):
     if font == "arial":
         font_file = 'arial.ttf'
     elif font == "cursive":
@@ -108,10 +112,56 @@ def text_center(txt, color, img, txt_size, font):
         (img.width / 2, img.height/2),
         text,
         font=fnt,
-        fill=color,
+        fill=txt_color,
         anchor='mm',
         align='center'
     )
+
+def one_line_text(txt, txt_color, img, txt_size, font, place):
+    if font == "arial":
+        font_file = 'arial.ttf'
+    elif font == "cursive":
+        font_file = 'cursive.ttf'
+    elif font == 'bold':
+        font_file = 'COOPBL.ttf'
+    elif font == 'hello_kitty':
+        font_file = 'hellokitty.ttf'
+    dctx = ImageDraw.Draw(img)
+    fnt = ImageFont.truetype(font_file, txt_size)
+    if place == 'top_center':
+        dctx.text(
+            (img.width / 2, 0 + 10),
+            txt,
+            font=fnt,
+            fill=txt_color,
+            anchor='ma',
+        )
+    if place == 'bottom_center':
+        dctx.text(
+            (img.width / 2, img.height - 10),
+            txt,
+            font=fnt,
+            fill=txt_color,
+            anchor='mb',
+        )
+    if place == 'center_left':
+        dctx.text(
+            (0+10, img.height / 2),
+            txt,
+            font=fnt,
+            fill=txt_color,
+            anchor='ls',
+        )
+    if place == 'center_right':
+        dctx.text(
+            (img.width-10, img.height / 2),
+            txt,
+            font=fnt,
+            fill="white",
+            anchor='rs',
+        )
+
+
 
 @route("/")
 def main():
@@ -195,14 +245,17 @@ def do_upload():
             contrasted = Image.merge("RGB", (b, g, r))
         if data.merged_bands == 'green':
             contrasted = Image.merge("RGB", (g, r, b))
-        size = contrasted.size
         print(data.text_placement)
         if data.on_text:
             txt = data.on_text
-            text_center(txt, data.text_color, contrasted, data.text_size, data.font)
+            if data.text_placement == 'center':
+                multi_text_center(txt, data.text_color, contrasted, data.text_size, data.font)
+            else:
+                one_line_text(txt, data.text_color, contrasted, data.text_size, data.font, data.text_placement)
         new_name = upload.filename
         mod_path = os.path.join("./modified", new_name)
         contrasted.save(mod_path)
+        size = contrasted.size
         return template("template_upload", picture_before=upload.filename, picture_after=new_name, size=size)
 
 @route('/history/<filename>')

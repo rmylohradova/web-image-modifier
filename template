@@ -83,20 +83,17 @@
         <input type="radio" id="green" name="merged_bands" value="green">
         <label for="green">green</label><br>
     </div><br>
-    <label for="on_text">Add text:</label><br>
+    <label for="on_text">Add English text:</label><br>
     <input type="text" id="on_text" name="on_text"><br>
     <label for="text_color">Text color: (either color name or html color code - 'white' or '#FFA07A')</label><br>
     <input type="text" id="text_color" name="text_color"><br>
-    <p>Choose text placement:</p>
+    <p>Choose text placement:
+    (Multi-line text available only in center)</p>
     <select id="text_placement" name="text_placement">
         <option value="center">center</option>
         <option value="top_center">top center</option>
         <option value="bottom_center">bottom center</option>
-        <option value="top_left">top left</option>
-        <option value="bottom_left">bottom left</option>
         <option value="center_left">center left</option>
-        <option value="top_right">top right</option>
-        <option value="bottom_right">bottom right</option>
         <option value="center_right">center right</option>
     </select>
         <label for="text_size">Text size:</label>
