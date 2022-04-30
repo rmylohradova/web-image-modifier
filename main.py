@@ -245,7 +245,6 @@ def do_upload():
             contrasted = Image.merge("RGB", (b, g, r))
         if data.merged_bands == 'green':
             contrasted = Image.merge("RGB", (g, r, b))
-        print(data.text_placement)
         if data.on_text:
             txt = data.on_text
             if data.text_placement == 'center':
@@ -255,8 +254,7 @@ def do_upload():
         new_name = upload.filename
         mod_path = os.path.join("./modified", new_name)
         contrasted.save(mod_path)
-        size = contrasted.size
-        return template("template_upload", picture_before=upload.filename, picture_after=new_name, size=size)
+        return template("template_upload", picture_before=upload.filename, picture_after=new_name, size=contrasted.size)
 
 @route('/history/<filename>')
 def show_images(filename):
