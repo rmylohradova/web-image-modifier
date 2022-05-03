@@ -1,15 +1,35 @@
 import os
-from PIL import Image, ImageFilter, ImageEnhance
+from PIL import Image
 from bottle import route, run, request, \
     template, static_file
 from pydantic import BaseModel, validator, Field
 from typing import Optional
 from enum import Enum
+from process_im_lib import process_image
 
 
 class Band(str, Enum):
     rgb = 'rgb'
     l = 'l'
+
+
+class MergedBand(str, Enum):
+    pink = 'pink'
+    blue = 'blue'
+    green = 'green'
+
+class TextPlacement(str, Enum):
+    center = 'center'
+    top_center = 'top_center'
+    bottom_center = 'bottom_center'
+    center_left = 'center_left'
+    center_right = 'center_right'
+
+class TextFont(str, Enum):
+    arial = 'arial'
+    bold = 'bold'
+    cursive = 'cursive'
+    hello_kitty = 'hello_kitty'
 
 
 class CleanedData(BaseModel):
@@ -33,6 +53,12 @@ class CleanedData(BaseModel):
     color: Optional[int]
     sharpness: Optional[int]
     contrast: Optional[int]
+    merged_bands: MergedBand = Field(None)
+    on_text: Optional[str]
+    text_color: Optional[str]
+    text_placement: TextPlacement = Field('center')
+    text_size: Optional[int]
+    font: TextFont = Field('arial')
 
     @validator('*', pre=True)
     def blank_string(cls, value):
@@ -54,7 +80,7 @@ class CleanedData(BaseModel):
                 raise ValueError('must be from 1 to 360 degrees')
         return value
 
-    @validator('brightness', 'color', 'sharpness', 'contrast')
+    @validator('brightness', 'color', 'sharpness', 'contrast', 'text_size')
     def check_range(cls, value):
         if value:
             if value < 1 or value > 1000:
@@ -62,14 +88,10 @@ class CleanedData(BaseModel):
         return value
 
 
-def convert(percent):
-    final = (percent/100)+1
-    return final
-
-
 @route("/")
 def main():
     return template("template")
+
 
 @route('/upload', method='POST')
 def do_upload():
@@ -81,84 +103,38 @@ def do_upload():
     save_path = os.path.join("./files", upload.filename)
     upload.save(save_path)
     with Image.open(save_path) as im:
-        if data.width is not None and data.height is not None:
-            box = (data.width, data.height)
-            sized = im.resize(box)
-        elif data.width is None and data.height is None:
-            sized = im
-        if data.rotate is not None:
-            image = sized.rotate(data.rotate)
-        elif data.rotate is None:
-            image = sized
-        if data.left_right:
-            image = image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-        if data.top_bottom:
-            image = image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
-        if data.band == 'rgb':
-            image = image.convert('RGB')
-        if data.band == 'l':
-            image = image.convert('L')
-        if data.blur:
-            image = image.filter(ImageFilter.BLUR)
-        if data.minfilter:
-            image = image.filter(ImageFilter.MinFilter)
-        if data.maxfilter:
-            image = image.filter(ImageFilter.MaxFilter)
-        if data.sharpen:
-            image = image.filter(ImageFilter.SHARPEN)
-        if data.contour:
-            image = image.filter(ImageFilter.CONTOUR)
-        if data.smooth:
-            image = image.filter(ImageFilter.SMOOTH)
-        if data.detail:
-            image = image.filter(ImageFilter.DETAIL)
-        if data.emboss:
-            image = image.filter(ImageFilter.EMBOSS)
-        if data.edge_enhance:
-            image = image.filter(ImageFilter.EDGE_ENHANCE)
-        if data.find_edges:
-            image = image.filter(ImageFilter.FIND_EDGES)
-        if data.brightness is not None:
-            img_bright = ImageEnhance.Brightness(image)
-            bright_value = convert(data.brightness)
-            brightened = img_bright.enhance(bright_value)
-        elif data.brightness is None:
-            brightened = image
-        if data.color is not None:
-            img_color = ImageEnhance.Color(brightened)
-            color_value = convert(data.color)
-            color_enhanced = img_color.enhance(color_value)
-        elif data.color is None:
-            color_enhanced = brightened
-        if data.sharpness is not None:
-            img_sharp = ImageEnhance.Sharpness(color_enhanced)
-            sharp_value = convert(data.sharpness)
-            sharpened = img_sharp.enhance(sharp_value)
-        elif data.sharpness is None:
-            sharpened = color_enhanced
-        if data.contrast is not None:
-            img_contrast = ImageEnhance.Contrast(sharpened)
-            contrast_value = convert(data.contrast)
-            contrasted = img_contrast.enhance(contrast_value)
-        elif data.contrast is None:
-            contrasted = sharpened
-        new_name = "modified" + name + ext
-        mod_path = os.path.join("./files", new_name)
-        contrasted.save(mod_path)
-        return template("template_upload", picture_before=upload.filename, picture_after=new_name)
+        im = process_image(im, data)
+        new_name = upload.filename
+        mod_path = os.path.join("./modified", new_name)
+        im.save(mod_path)
+    return template("template_upload", picture_before=upload.filename, picture_after=new_name, size=im.size)
 
+
+@route('/history/<filename>')
+def show_images(filename):
+    name, ext = os.path.splitext(filename)
+    return template('single_history', picture_before=filename, picture_after=filename, picture_name=name)
+
+
+@route('/history')
+def show_all():
+    original = []
+    for filename in os.listdir('files/'):
+            original.append(filename)
+    return template('history', original=original)
 
 
 @route('/static/<filename>')
 def server_static(filename):
     return static_file(filename, root="./files")
 
-@route('/static/<filename>')
+
+@route('/static/modified/<filename>')
 def server_static(filename):
-    return static_file(filename, root="./files")
+    return static_file(filename, root="./modified")
 
 
 
 
-
-run(reloader=True, debug=True, host='localhost', port=8080)
+if __name__ == '__main__':
+    run(reloader=True, debug=True, host='0.0.0.0', port=8000)

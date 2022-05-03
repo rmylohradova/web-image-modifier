@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Results page</title>
+    <title>Saved changes for {{ picture_before }}</title>
 </head>
 <body>
 <a href="/">home</a>
 <a href="/history">history</a>
-<p>Image before changes</p>
+<p>original {{ picture_name}} image</p>
 <img src="/static/{{ picture_before }}"/>
-<p>Image after changes</p>
+<p>was changed to</p>
 <img src="/static/modified/{{ picture_after }}"/>
-<p>{{size}} is  the size of your image</p>
 </body>
 </html>
