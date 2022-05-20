@@ -18,6 +18,7 @@ class MergedBand(str, Enum):
     blue = 'blue'
     green = 'green'
 
+
 class TextPlacement(str, Enum):
     center = 'center'
     top_center = 'top_center'
@@ -25,11 +26,13 @@ class TextPlacement(str, Enum):
     center_left = 'center_left'
     center_right = 'center_right'
 
+
 class TextFont(str, Enum):
     arial = 'arial'
     bold = 'bold'
     cursive = 'cursive'
-    hello_kitty = 'hello_kitty'
+    motion_picture = 'motion_picture'
+    southern_aire = 'southern_aire'
 
 
 class CleanedData(BaseModel):
@@ -90,7 +93,7 @@ class CleanedData(BaseModel):
 
 @route("/")
 def main():
-    return template("template")
+    return template("templates/template.html")
 
 
 @route('/upload', method='POST')
@@ -107,13 +110,13 @@ def do_upload():
         new_name = upload.filename
         mod_path = os.path.join("./modified", new_name)
         im.save(mod_path)
-    return template("template_upload", picture_before=upload.filename, picture_after=new_name, size=im.size)
+    return template("templates/template_upload.html", picture_before=upload.filename, picture_after=new_name, size=im.size)
 
 
 @route('/history/<filename>')
 def show_images(filename):
     name, ext = os.path.splitext(filename)
-    return template('single_history', picture_before=filename, picture_after=filename, picture_name=name)
+    return template('template/single_history.html', picture_before=filename, picture_after=filename, picture_name=name)
 
 
 @route('/history')
@@ -121,7 +124,7 @@ def show_all():
     original = []
     for filename in os.listdir('files/'):
             original.append(filename)
-    return template('history', original=original)
+    return template('templates/history.html', original=original)
 
 
 @route('/static/<filename>')
@@ -132,8 +135,6 @@ def server_static(filename):
 @route('/static/modified/<filename>')
 def server_static(filename):
     return static_file(filename, root="./modified")
-
-
 
 
 if __name__ == '__main__':

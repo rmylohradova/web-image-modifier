@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modify your image</title>
+</head>
+<body>
+<header>
+    <h2>Process your image</h2>
+</header>
+<form action= "/upload" method="post" enctype="multipart/form-data">
+    Select a .jpg, or .jpeg file: <input type="file" name="upload"/>
+    <div>
+        <p>Change picture size:</p>
+        <label for="height">height</label>
+        <input type="number" name="height" id="height" min="1" max="1080"/>
+    </div>
+    <div>
+        <label for="width">width</label>
+        <input type="number" name="width" id="width" min="1" max="1080" />
+    </div>
+    <div>
+        <p>Rotate # degrees counter-clockwise:</p>
+        <label>rotate</label>
+        <input type="number" name="rotate" id="rotate" min="0" max="360"/>
+    </div>
+    <div>
+     <p>Flip the image left-right:</p>
+        <input type="checkbox" name="left_right"/>
+    </div>
+    <div>
+     <p>Flip the image top-bottom:</p>
+        <input type="checkbox" name="top_bottom"/>
+    </div>
+    <div>
+        <p>Choose colored picture or black&white</p>
+        <input type="radio" id="rgb" name="band" value="rgb">
+        <label for="rgb">colored</label><br>
+        <input type="radio" id="l" name="band" value="l">
+        <label for="l">black/white</label><br>
+    </div>
+    <div><p>Filter your image:</p>
+        <label>blur</label>
+        <input type="checkbox" name="blur"/><br>
+        <label>minfilter</label>
+        <input type="checkbox" name="minfilter"/><br>
+        <label>maxfilter</label>
+        <input type="checkbox" name="maxfilter"/><br>
+        <label>sharpen</label>
+        <input type="checkbox" name="sharpen"/><br>
+        <label>contour</label>
+        <input type="checkbox" name="contour"/><br>
+        <label>smooth</label>
+        <input type="checkbox" name="smooth"/><br>
+        <label>detail</label>
+        <input type="checkbox" name="detail"/><br>
+        <label>emboss</label>
+        <input type="checkbox" name="emboss"/><br>
+        <label>edge enhance</label>
+        <input type="checkbox" name="edge_enhance"/><br>
+        <label>find edges</label>
+        <input type="checkbox" name="find_edges"/><br>
+    </div>
+    <div>
+        <p>Enhance brightness by # % (from 1 to 1000%):</p>
+        <label>brightness</label>
+        <input type="number" name="brightness" id="brightness" min="1" max="1000">
+    </div>
+    <div>
+        <p>Enhance color by # % (from 1 to 1000%):</p>
+        <label>color</label>
+        <input type="number" name="color" id="color" min="1" max="1000">
+    </div>
+    <div>
+        <p>Enhance sharpness by # % (from 1 to 1000%):</p>
+        <label>sharpness</label>
+        <input type="number" name="sharpness" id="sharpness" min="1" max="1000">
+    </div>
+    <div>
+        <p>Enhance contrast by # % (from 1 to 1000%):</p>
+        <label>contrast</label>
+        <input type="number" name="contrast" id="contrast" min="1" max="1000">
+    </div>
+    <div>
+        <p>Make image:</p>
+        <input type="radio" id="pink" name="merged_bands" value="pink">
+        <label for="pink">pink</label><br>
+        <input type="radio" id="blue" name="merged_bands" value="blue">
+        <label for="blue">blue</label><br>
+        <input type="radio" id="green" name="merged_bands" value="green">
+        <label for="green">green</label><br>
+    </div><br>
+    <label for="on_text">Add English text:</label><br>
+    <input type="text" id="on_text" name="on_text"><br>
+    <label for="text_color">Text color: (either color name or html color code - 'white' or '#FFA07A')</label><br>
+    <input type="text" id="text_color" name="text_color"><br>
+    <p>Choose text placement:
+    (Multi-line text available only in center)</p>
+    <select id="text_placement" name="text_placement">
+        <option value="center">center</option>
+        <option value="top_center">top center</option>
+        <option value="bottom_center">bottom center</option>
+        <option value="center_left">center left</option>
+        <option value="center_right">center right</option>
+    </select>
+        <label for="text_size">Text size:</label>
+        <input type="number" name="text_size" id="text_size" min="1" max="1000" value="10"/>
+    <select id="font" name="font">
+        <option value="arial">Arial</option>
+        <option value="cursive">Cursive</option>
+        <option value="bold">Bold</option>
+        <option value="motion_picture">Motion Picture</option>
+        <option value="southern_aire">Southern Aire</option>
+    </select>
+    <div><br>
+        <input type="submit" value="Apply" />
+    </div><br>
+</form>
+    <a href="/history">history</a>
+</body>
+</html>
