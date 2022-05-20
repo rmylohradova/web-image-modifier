@@ -10,13 +10,15 @@ def convert(percent):
 
 def apply_font(font):
     if font == "arial":
-        font_file = 'arial.ttf'
+        font_file = 'fonts/arial.ttf'
     elif font == "cursive":
-        font_file = 'cursive.ttf'
+        font_file = 'fonts/cursive.ttf'
     elif font == 'bold':
-        font_file = 'COOPBL.ttf'
-    elif font == 'hello_kitty':
-        font_file = 'hellokitty.ttf'
+        font_file = 'fonts/COOPBL.ttf'
+    elif font == "motion_picture":
+        font_file = 'fonts/MotionPicture.ttf'
+    elif font == "southern_aire":
+        font_file = 'fonts/SouthernAire.ttf'
     return font_file
 
 
@@ -152,6 +154,7 @@ def maybe_filter(image, blur, minfilter, maxfilter, sharpen, contour, smooth, de
         image = image.filter(ImageFilter.FIND_EDGES)
     return image
 
+
 def maybe_change_color(color, image):
     if color:
         r, g, b = image.split()
@@ -165,7 +168,7 @@ def maybe_change_color(color, image):
 
 
 def process_image(im, data):
-    im = maybe_resize(data.height, data.width, im)
+    im = maybe_resize(data.width, data.height, im)
     im = maybe_rotate(data.rotate, im)
     if data.left_right:
         im = im.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
