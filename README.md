@@ -18,16 +18,22 @@ module
 
 1. To build a docker image:
 
-
+```python
+docker build -t im-pro-app .
+```
 
 2. in the *main.py* specify the host the server should listen to and the listening port.
 
-
+```python
+if __name__ == '__main__':
+    run(reloader=True, debug=True, host='0.0.0.0', port=8000)
+```
 
 3. To run a container with the image, specify mapping of a container port to a port on the Docker host with the `-p` flag:
 
 ```python
 docker run -p 8000:8000 im-pro-app
+```
 
 
 4. Image processing app is now available on
